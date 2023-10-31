@@ -5,7 +5,7 @@
 
 docker exec -i interview_laravel composer install
 docker exec -i interview_laravel php artisan migrate
-docker exec -i interview_mysql mysql -u sail -p laravel -e "LOAD DATA INFILE '/var/lib/mysql-files/testCompanyDB.csv' INTO TABLE companies FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;"
+docker exec -i interview_mysql mysql -u sail -p laravel -e "LOAD DATA INFILE '/var/lib/mysql-files/testCompanyDB.csv' INTO TABLE companies FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 0 ROWS;"
 
 docker exec -i interview_mysql mysql -u root -p laravel -e "
 set global log_bin_trust_function_creators = 1;

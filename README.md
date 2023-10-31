@@ -2,6 +2,10 @@
 Egy alap szintű API Laravelben megvalósítva. 
 A prject Laravel 8-at, PHP7.4-et és MYSQL 8-at használ.
 
+## Végpontok
+
+A root könyvtárban megtalálható egy `Interview.postman_collection.json` nevű file. Ez egy postman collection-t tartalmaz. 
+
 ## Projekt indítása
 A Laravel által biztosított sail commanddal el tudjuk indítani, a Projekt rootjában állva a `./vendor/bin/sail up` parancs kiadásával.
 
