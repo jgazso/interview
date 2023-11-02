@@ -1,64 +1,99 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## A Projekt
+Egy alap szintű API Laravelben megvalósítva. 
+A prject Laravel 8-at, PHP7.4-et és MYSQL 8-at használ.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Végpontok
 
-## About Laravel
+A root könyvtárban megtalálható egy `Interview.postman_collection.json` nevű file. Ez egy postman collection-t tartalmaz. 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Projekt indítása
+A Laravel által biztosított sail commanddal el tudjuk indítani, a Projekt rootjában állva a `./vendor/bin/sail up` parancs kiadásával.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Ez buildeli a megfelelő image-eket és fellövi a megfelelő containereket.
+A projekt a http://localhost url-en lesz elérhető
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Adatbázis kezeléshez phpmyadmin-t tartalmaz a docker aminek az elérése a http://localhost:8081
 
-## Learning Laravel
+## install.sh
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Az installálás megkönnyítéséhez elég az install.sh file-t futtatni ez a következő lépéseket hajtja végre:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- leállítja a docker container-eket ha futnak
+- elindítja a docker container-eket a háttérben, ha nem futnak és amennyiben szükséges újra lebuildeli a image-et.
+- lefuttatja a laravel container-ében a composer isntall-t
+- lefuttatja a laravel container-ében az artisan migrate parancsát
+- importálja a testCompanyDB.csv tartalmát az adatbázisba
+- létrehozza a feladatban meghatározott megszorításhoz a triggert a companies táblán, hogy ne lehessen módosítania  regusztráció dátumát.
+- létrehozza a feladatban leírtak szerinti adat visszaadáshoz szükséges tárolt eljárást amenyniben az még nem létezik: későbbiekben ezt db oldalon a `CALL DynamicActivityQuery();` sql futtatásával tudjuk lekérni.
 
-## Laravel Sponsors
+## Adatbázis lekérések a kiírásban leirtak megvalósításához
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Feladat: A regisztráció idejét ne lehessen módosítani (ezt db szinten oldjuk meg, hogy más kódrészlet se tudjon módosítani)
 
-### Premium Partners
+```sql 
+set global log_bin_trust_function_creators = 1;
+DELIMITER $$
+CREATE TRIGGER IF NOT EXISTS PreventCompanyFoundationDateUpdate
+BEFORE UPDATE ON companies FOR EACH ROW
+BEGIN
+    IF NEW.companyFoundationDate <> OLD.companyFoundationDate THEN
+        signal sqlstate '45000' set message_text = 'Company Foundation Date Can\'t be modify';
+    END IF;
+END$$
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+DELIMITER;
+set global log_bin_trust_function_creators = 0;
+```
 
-## Contributing
+### Feladat: Készíts egy olyan lekérdezést amely visszaadja, hogy 2001.01.01 napjától kezdve egészen a mai napig az adott napon mely cégek alakultak meg. (azon a napon ahol nem volt cég alapítás ott null értéket vegyen fel)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Amennyiben lehetséges ezt root felhasználóval futtassuk. A SET GLOBAL `cte_max_recursion_depth=100000;` miatt. 
 
-## Code of Conduct
+```sql 
+SET GLOBAL cte_max_recursion_depth=100000;
+WITH RECURSIVE DateRange AS (
+    SELECT DATE('2001-01-01') AS Date
+    UNION ALL
+    SELECT DATE_ADD(Date, INTERVAL 1 DAY)
+    FROM DateRange
+    WHERE Date < NOW()
+)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+SELECT DateRange.Date, IFNULL(companies.companyName, 'Nincs alapítás!') AS Company
+FROM DateRange
+LEFT JOIN companies ON DateRange.Date = companies.companyFoundationDate
+ORDER BY DateRange.Date;
+```
 
-## Security Vulnerabilities
+### Feladat: Készíts egy lekérdezést melynek az oszlopai az “activity” mezőben lévő értékek
+(ezek dinamikus adatok), sorai pedig az adott activity-hez tartozó cég név legyen.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```sql 
+DROP PROCEDURE IF EXISTS DynamicActivityQuery;
 
-## License
+DELIMITER $$
+CREATE PROCEDURE DynamicActivityQuery()
+BEGIN
+SET SESSION group_concat_max_len = 1000000;
+SET @sql = NULL;
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+SELECT GROUP_CONCAT(DISTINCT CONCAT('MAX(CASE WHEN activity = ''', activity, ''' THEN companyName END) AS `', activity, '`'))
+INTO @activityColumns
+FROM companies;
+
+SET @sql = CONCAT('
+    SELECT ', @activityColumns, '
+    FROM companies
+    GROUP BY companyName
+');
+
+PREPARE dynamic_sql FROM @sql;
+EXECUTE dynamic_sql;
+DEALLOCATE PREPARE dynamic_sql;
+END$$
+DELIMITER ;
+
+
+CALL DynamicActivityQuery();
+```
+

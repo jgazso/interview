@@ -1,0 +1,269 @@
+{
+	"info": {
+		"_postman_id": "8c2c8db2-34c9-427b-8d4d-0688b6c968c0",
+		"name": "Interview",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30867444"
+	},
+	"item": [
+		{
+			"name": "Companies",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "con",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost/api/companies",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"companies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ListMultipleIds",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "con",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost/api/companies?ids=1,2,3,4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"companies"
+							],
+							"query": [
+								{
+									"key": "ids",
+									"value": "1,2,3,4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Item",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "con",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost/api/companies/101",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"companies",
+								"101"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "con",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost/api/companies/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"companies",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewItem",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "con",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\t\"companyName\": \"Teszt Elek\",\r\n\t\t\"companyRegistrationNumber\": \"609476-5515\",\r\n\t\t\"companyFoundationDate\": \"1984-11-28 00:00:00\",\r\n\t\t\"country\": \"Northern Mariana Islands\",\r\n\t\t\"zipCode\": \"64967\",\r\n\t\t\"city\": \"Lonquimay\",\r\n\t\t\"streetAddress\": \"Ap #191-7809 Nec Ave\",\r\n\t\t\"latitude\": \"71.41273\",\r\n\t\t\"longitude\": \"-64.46302\",\r\n\t\t\"companyOwner\": \"Hayes Harper\",\r\n\t\t\"employees\": 500,\r\n\t\t\"activity\": \"Growing Plants\",\r\n\t\t\"active\": true,\r\n\t\t\"email\": \"test@perinceptos.ca\",\r\n\t\t\"password\": \"almafa\"\r\n\t}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/companies",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"companies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ReplaceItem",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "con",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\t\"companyName\": \"Teszt Elek2\",\r\n\t\t\"companyRegistrationNumber\": \"609476-5515\",\r\n\t\t\"companyFoundationDate\": \"1984-11-28 00:00:00\",\r\n\t\t\"country\": \"Northern Mariana Islands2\",\r\n\t\t\"zipCode\": \"64967\",\r\n\t\t\"city\": \"Lonquimay2\",\r\n\t\t\"streetAddress\": \"Ap #191-7809 Nec Ave\",\r\n\t\t\"latitude\": \"71.41273\",\r\n\t\t\"longitude\": \"-64.46302\",\r\n\t\t\"companyOwner\": \"Hayes Harper\",\r\n\t\t\"employees\": 500,\r\n\t\t\"activity\": \"Growing Plants\",\r\n\t\t\"active\": false,\r\n\t\t\"email\": \"test@perinceptos.ca\",\r\n\t\t\"password\": \"almafa2\"\r\n\t}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/companies/101",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"companies",
+								"101"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateFields",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "con",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\t\"companyName\": \"Teszt Elek\",\r\n        \"companyFoundationDate\": \"2000-11-28 00:00:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/companies/101",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"companies",
+								"101"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
