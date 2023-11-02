@@ -33,7 +33,7 @@ Az installálás megkönnyítéséhez elég az install.sh file-t futtatni ez a k
 ```sql 
 set global log_bin_trust_function_creators = 1;
 DELIMITER $$
-CREATE TRIGGER PreventCompanyFoundationDateUpdate
+CREATE TRIGGER IF NOT EXISTS PreventCompanyFoundationDateUpdate
 BEFORE UPDATE ON companies FOR EACH ROW
 BEGIN
     IF NEW.companyFoundationDate <> OLD.companyFoundationDate THEN
@@ -46,6 +46,8 @@ set global log_bin_trust_function_creators = 0;
 ```
 
 ### Feladat: Készíts egy olyan lekérdezést amely visszaadja, hogy 2001.01.01 napjától kezdve egészen a mai napig az adott napon mely cégek alakultak meg. (azon a napon ahol nem volt cég alapítás ott null értéket vegyen fel)
+
+Amennyiben lehetséges ezt root felhasználóval futtassuk. A SET GLOBAL `cte_max_recursion_depth=100000;` miatt. 
 
 ```sql 
 SET GLOBAL cte_max_recursion_depth=100000;

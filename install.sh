@@ -5,12 +5,12 @@
 
 docker exec -i interview_laravel composer install
 docker exec -i interview_laravel php artisan migrate
-docker exec -i interview_mysql mysql -u sail -p laravel -e "LOAD DATA INFILE '/var/lib/mysql-files/testCompanyDB.csv' INTO TABLE companies FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 0 ROWS;"
+docker exec -i interview_mysql mysql -u root -p laravel -e "LOAD DATA INFILE '/var/lib/mysql-files/testCompanyDB.csv' INTO TABLE companies FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n';"
 
 docker exec -i interview_mysql mysql -u root -p laravel -e "
 set global log_bin_trust_function_creators = 1;
 DELIMITER $$
-CREATE TRIGGER PreventCompanyFoundationDateUpdate
+CREATE TRIGGER IF NOT EXISTS PreventCompanyFoundationDateUpdate
 BEFORE UPDATE ON companies FOR EACH ROW
 BEGIN
   IF NEW.companyFoundationDate <> OLD.companyFoundationDate THEN
@@ -31,7 +31,7 @@ BEGIN
   SET SESSION group_concat_max_len = 1000000;
   SET @sql = NULL;
 
-  SELECT GROUP_CONCAT(DISTINCT CONCAT('MAX(CASE WHEN activity = ''', activity, ''' THEN companyName END) AS `', activity, '`'))
+  SELECT GROUP_CONCAT(DISTINCT CONCAT('MAX(CASE WHEN activity = ''', activity, ''' THEN companyName END) AS \`', activity, '\`'))
   INTO @activityColumns
   FROM companies;
 
